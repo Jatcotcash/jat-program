@@ -1,0 +1,27 @@
+[package]
+name = "seal"
+version = "0.1.0"
+description = "SEAL: proof-of-receipt verifier for Solana"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "seal"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "0.31.1"
+# On-chain Groth16/BN254 verifier (Light Protocol). Rides Solana alt_bn128 syscalls.
+groth16-solana = "0.2.0"
+# On-chain Poseidon (BN254, circom params). Syscall on-chain; light-poseidon off-chain.
+solana-poseidon = "2.3.13"
+
+[dev-dependencies]
+serde_json = "1"
