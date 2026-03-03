@@ -4,9 +4,12 @@
 
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{transfer, Transfer};
+use groth16_solana::groth16::Groth16Verifier;
 use solana_poseidon::{hashv, Endianness, Parameters};
 
 declare_id!("seuH78RmBPVzoKToLQVEZrDvuL5jDNBSbptozWK9PEm");
+
+pub mod vk;
 
 pub const DEPTH: usize = 20;
 pub const ROOT_HISTORY: usize = 30;
@@ -90,6 +93,52 @@ pub mod seal {
         });
         Ok(())
     }
+
+        /// Verify a proof-of-receipt against a recent root and consume the nullifier.
+    /// public_inputs order: [merkle_root, threshold, context_hash, nullifier]
+    pub fn seal_verify(
+        ctx: Context<SealVerify>,
+        proof_a: [u8; 64],
+        proof_b: [u8; 128],
+        proof_c: [u8; 64],
+        merkle_root: [u8; 32],
+        threshold: [u8; 32],
+        context_hash: [u8; 32],
+        nullifier: [u8; 32],
+    ) -> Result<()> {
+        // the proof's root must be one the pool actually produced (recent history)
+        require!(
+            ctx.accounts.tree_state.roots.contains(&merkle_root),
+            SealError::StaleRoot
+        );
+
+        let public_inputs: [[u8; 32]; 4] = [merkle_root, threshold, context_hash, nullifier];
+
+        let mut verifier = Groth16Verifier::new(
+            &proof_a,
+            &proof_b,
+            &proof_c,
+            &public_inputs,
+            &vk::VERIFYINGKEY,
+        )
+        .map_err(|_| error!(SealError::ProofMalformed))?;
+
+        verifier
+            .verify()
+            .map_err(|_| error!(SealError::ProofInvalid))?;
+
+        // nullifier PDA is init'd here; if it already exists the tx fails =
+        // double-use within this context is rejected.
+        let nf = &mut ctx.accounts.nullifier_record;
+        nf.used = true;
+        nf.bump = ctx.bumps.nullifier_record;
+
+        emit!(GateOpened {
+            context_hash,
+            nullifier
+        });
+        Ok(())
+    }
 }
 
 // ---- Poseidon helpers (sol_poseidon syscall; BN254 circom params, big-endian). ----
@@ -154,6 +203,23 @@ pub struct Deposit<'info> {
 }
 
 
+#[derive(Accounts)]
+#[instruction(proof_a: [u8;64], proof_b: [u8;128], proof_c: [u8;64], merkle_root: [u8;32], threshold: [u8;32], context_hash: [u8;32], nullifier: [u8;32])]
+pub struct SealVerify<'info> {
+    #[account(seeds = [b"tree"], bump = tree_state.bump)]
+    pub tree_state: Box<Account<'info, TreeState>>,
+    /// one nullifier record per (context_hash, nullifier): init = single-use gate
+    #[account(
+        init, payer = payer, space = 8 + NullifierRecord::SIZE,
+        seeds = [b"nf", context_hash.as_ref(), nullifier.as_ref()], bump
+    )]
+    pub nullifier_record: Account<'info, NullifierRecord>,
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+
 #[account]
 pub struct TreeState {
     pub current_root: [u8; 32],
@@ -169,6 +235,16 @@ impl TreeState {
 }
 
 
+#[account]
+pub struct NullifierRecord {
+    pub used: bool,
+    pub bump: u8,
+}
+impl NullifierRecord {
+    pub const SIZE: usize = 1 + 1;
+}
+
+
 #[event]
 pub struct Deposit_ {
     pub leaf: [u8; 32],
@@ -178,8 +254,21 @@ pub struct Deposit_ {
 }
 
 
+#[event]
+pub struct GateOpened {
+    pub context_hash: [u8; 32],
+    pub nullifier: [u8; 32],
+}
+
+
 #[error_code]
 pub enum SealError {
+    #[msg("merkle root in proof is not a recent pool root")]
+    StaleRoot,
+    #[msg("proof bytes malformed")]
+    ProofMalformed,
+    #[msg("groth16 proof verification failed")]
+    ProofInvalid,
     #[msg("deposit amount is not an allowed denomination")]
     BadDenom,
     #[msg("poseidon hash error")]
