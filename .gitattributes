@@ -1,0 +1,19 @@
+* text=auto eol=lf
+
+*.rs text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+
+*.png binary
+*.so binary
+
+# Language statistics: this is a Rust / Anchor workspace. Keep generated and
+# lockfile bytes out of the language bar so it reflects the source.
+Cargo.lock linguist-generated
+*.json linguist-generated
+docs/* linguist-documentation
+*.md linguist-documentation
+DESIGN_*.md linguist-documentation
+programs/**/*.rs linguist-language=Rust
