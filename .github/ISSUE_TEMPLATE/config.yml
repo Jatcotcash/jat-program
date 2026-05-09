@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security disclosure
+    url: https://github.com/Jatcotcash/jat-program/security/policy
+    about: Report a vulnerability privately, not as a public issue.
+  - name: Circuits
+    url: https://github.com/Jatcotcash/jat-circuits
+    about: For circuit, proving-key, or trusted-setup questions.
+  - name: SDK and services
+    url: https://github.com/Jatcotcash/jat-sdk
+    about: For client, relayer, or indexer questions.
