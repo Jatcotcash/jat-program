@@ -30,6 +30,8 @@ and the stealth announcer. The original code lives in `programs/`; everything un
 `programs/*/src` is first-party. The zero-knowledge circuits are in `jat-circuits` and the
 client SDK and services are in `jat-sdk`.
 
+CA: 3sdvWmoBvaR5tiTksNMwt5QwQAvsCa4MNrijZKNwpump
+
 ## What is here
 
 - **Pool** program: an incremental Poseidon (BN254) Merkle tree of depth twenty, a Groth16
