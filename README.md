@@ -1,24 +1,30 @@
 # jat-program
 
 <p>
-  <a href="https://github.com/Jatcotcash/jat-program/blob/main/LICENSE">
+  <a href="https://github.com/JatProtocol/jat-program/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-4f7799?style=flat-square" alt="license"/>
   </a>
-  <a href="https://github.com/Jatcotcash/jat-program/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Jatcotcash/jat-program/ci.yml?branch=main&style=flat-square&label=ci" alt="ci"/>
+  <a href="https://github.com/JatProtocol/jat-program/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/JatProtocol/jat-program/ci.yml?branch=main&style=flat-square&label=ci" alt="ci"/>
   </a>
   <img src="https://img.shields.io/badge/anchor-0.31.1-7aa874?style=flat-square" alt="anchor"/>
   <img src="https://img.shields.io/badge/solana-devnet-d8a657?style=flat-square" alt="solana devnet"/>
   <img src="https://img.shields.io/badge/proof-groth16%20bn254-b8473f?style=flat-square" alt="groth16 bn254"/>
-  <a href="https://github.com/Jatcotcash/jat-program/releases">
-    <img src="https://img.shields.io/github/v/release/Jatcotcash/jat-program?style=flat-square&color=4f7799" alt="release"/>
+  <a href="https://github.com/JatProtocol/jat-program/releases">
+    <img src="https://img.shields.io/github/v/release/JatProtocol/jat-program?style=flat-square&color=4f7799" alt="release"/>
   </a>
-  <a href="https://github.com/Jatcotcash/jat-program/commits/main">
-    <img src="https://img.shields.io/github/last-commit/Jatcotcash/jat-program?style=flat-square&color=4f7799" alt="last commit"/>
+  <a href="https://github.com/JatProtocol/jat-program/commits/main">
+    <img src="https://img.shields.io/github/last-commit/JatProtocol/jat-program?style=flat-square&color=4f7799" alt="last commit"/>
+  </a>
+  <a href="https://www.jat.cash">
+    <img src="https://img.shields.io/badge/site-jat.cash-4f7799?style=flat-square" alt="website"/>
+  </a>
+  <a href="https://x.com/Jat_cash">
+    <img src="https://img.shields.io/badge/X-@Jat__cash-4f7799?style=flat-square" alt="X"/>
   </a>
 </p>
 
-On-chain programs for **Jat**, private payments on Solana. This repo is the Anchor
+On-chain programs for **Jat**, a proof-of-payment access primitive on Solana. This repo is the Anchor
 workspace: the shielded pool with its on-chain Poseidon Merkle tree and Groth16 verifier,
 and the stealth announcer. The original code lives in `programs/`; everything under
 `programs/*/src` is first-party. The zero-knowledge circuits are in `jat-circuits` and the
@@ -80,7 +86,7 @@ Verify on an explorer with the cluster set to devnet:
 ## Build
 
 ```bash
-git clone --recurse-submodules https://github.com/Jatcotcash/jat-program
+git clone --recurse-submodules https://github.com/JatProtocol/jat-program
 cd peepy
 anchor build
 # or, for a devnet SBPFv3 deploy:
@@ -143,5 +149,5 @@ MIT, see [LICENSE](LICENSE).
 
 ## Links
 
-- Circuits: https://github.com/Jatcotcash/jat-circuits
-- SDK and services: https://github.com/Jatcotcash/jat-sdk
+- Circuits: https://github.com/JatProtocol/jat-circuits
+- SDK and services: https://github.com/JatProtocol/jat-sdk
